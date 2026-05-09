@@ -73,3 +73,6 @@ Testing/
 
 #Vscode files
 .vscode
+
+# Node modules
+node_modules/
