@@ -102,9 +102,6 @@ def main():
     print("Para demonstrar o Circuit Breaker:")
     print("1. Deixe o proxy rodando.")
     print("2. Derrube apenas o servidor REST.")
-    print(
-        "   Sugestao: rode servidor e proxy separados com make run-server e make run-proxy."
-    )
     print("3. Quando o servidor REST estiver parado, pressione Enter aqui.")
     input()
 
