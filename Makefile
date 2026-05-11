@@ -6,7 +6,7 @@ DEPS_DIR := $(CURDIR)/build/_deps
 SERVER_BIN := $(SERVER_BUILD_DIR)/server
 PROXY_BIN := $(PROXY_BUILD_DIR)/proxy
 
-.PHONY: all build server proxy run run-server run-proxy demo-py stop-server stop-proxy stop clean
+.PHONY: all build server proxy run run-server run-proxy test-py stop-server stop-proxy stop clean
 
 all: build
 
@@ -37,7 +37,7 @@ run-server: server
 run-proxy: proxy
 	$(PROXY_BIN)
 
-demo-py:
+test-py:
 	python3 client_py/example.py
 
 stop-server:
