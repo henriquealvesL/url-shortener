@@ -22,6 +22,12 @@ FetchContent_MakeAvailable(cpp_httplib)
 add_executable(proxy
     main.cpp
     http/RestClient.cpp
+    patterns/CircuitBreaker.cpp
+    protocol/MessageParser.cpp
+    socket/ClientHandler.cpp
+    socket/SocketServer.cpp
 )
 
-target_link_libraries(proxy PRIVATE nlohmann_json::nlohmann_json httplib::httplib)
+find_package(Threads REQUIRED)
+
+target_link_libraries(proxy PRIVATE nlohmann_json::nlohmann_json httplib::httplib Threads::Threads)
