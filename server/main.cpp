@@ -7,13 +7,27 @@
 
 using json = nlohmann::json;
 
+namespace
+{
+    std::string short_url_for(const httplib::Request& req, const std::string& code)
+    {
+        std::string host = req.get_header_value("Host");
+        if (host.empty())
+        {
+            host = "127.0.0.1:8080";
+        }
+
+        return "http://" + host + "/" + code;
+    }
+}
+
 int main()
 {
     httplib::Server server;
 
     UrlStore store;
 
-    server.Post("/shorten",
+    server.Post("/urls",
                 [&](const httplib::Request &req, httplib::Response &res)
     {
         try
@@ -37,7 +51,8 @@ int main()
                       << "\n";
 
             json response;
-            response["code"] = code;
+            response["codigo"] = code;
+            response["url_curta"] = short_url_for(req, code);
 
             res.set_content(response.dump() + "\n",
                             "application/json");
@@ -50,7 +65,7 @@ int main()
         }
     });
 
-    server.Get(R"(/resolve/(.+))",
+    server.Get(R"(/urls/([A-Za-z0-9]{6}))",
                [&](const httplib::Request &req, httplib::Response &res)
     {
         std::string code = req.matches[1];
@@ -68,7 +83,7 @@ int main()
                   << "\n";
 
         json response;
-        response["url"] = url.value();
+        response["url_original"] = url.value();
 
         res.set_content(response.dump() + "\n",
                         "application/json");
@@ -76,7 +91,7 @@ int main()
         res.status = 200;
     });
 
-    server.Delete(R"(/remove/(.+))",
+    server.Delete(R"(/urls/([A-Za-z0-9]{6}))",
                   [&](const httplib::Request &req, httplib::Response &res)
     {
         std::string code = req.matches[1];
@@ -106,6 +121,28 @@ int main()
                         "application/json");
 
         res.status = 200;
+    });
+
+    server.Get(R"(/([A-Za-z0-9]{6}))",
+               [&](const httplib::Request &req, httplib::Response &res)
+    {
+        std::string code = req.matches[1];
+
+        auto url = store.resolve(code);
+
+        if (!url.has_value())
+        {
+            res.status = 404;
+            return;
+        }
+
+        std::cout << "[REDIRECT] "
+                  << code
+                  << " -> "
+                  << url.value()
+                  << "\n";
+
+        res.set_redirect(url.value(), 302);
     });
 
     std::cout << "REST server running on port 8080\n";
