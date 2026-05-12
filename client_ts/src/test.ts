@@ -3,7 +3,7 @@ import { UrlShortenerClient } from "./UrlShortenerClient";
 async function main() {
   const client = new UrlShortenerClient(
     "localhost",
-    8080
+    9000
   );
 
   const code = await client.shorten(
