@@ -129,17 +129,6 @@ RestClient::RemoveResult RestClient::remove(const std::string &code) const
     return result;
   }
 
-  nlohmann::json json;
-  try
-  {
-    json = nlohmann::json::parse(resp.body);
-  }
-  catch (...)
-  {
-    result.error = "JSON parse failed";
-    return result;
-  }
-
   result.ok = true;
   return result;
 }
